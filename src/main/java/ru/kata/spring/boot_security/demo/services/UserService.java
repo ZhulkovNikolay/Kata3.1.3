@@ -42,8 +42,8 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(String.format("user '%s' not found", username));
         }
-        //Спрингу нужно знать только имя, пароль и право джоступа. Этим заведует UserDetails
-        //Наша задача нашего Юзера в БД привети к типу Юзера спрингова из UserDetails
+        //Спрингу нужно знать только имя, пароль и право доступа. Этим заведует UserDetails
+        //Наша задача нашего Юзера в БД привеcти к типу Юзера спрингова из UserDetails
         //мы возвращаем спрингового юзера и внутрь кладем нашего
         return new org.springframework.security.core.userdetails
                 .User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
