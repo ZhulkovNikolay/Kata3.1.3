@@ -1,13 +1,16 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import java.security.Principal;
 
-@org.springframework.web.bind.annotation.RestController
-public class RestController {
+@RestController
+public class MainRestController {
 
     private UserService userService;
 
@@ -41,17 +44,11 @@ public class RestController {
 
     //Principal - информация о текущем пользователе
     //Можем здесь преобразовывать юзеров
-  //  @GetMapping("/authenticated")
+    //@GetMapping("/authenticated")
     @GetMapping("/user")
     public String pageForAuthenticatedUsers(Principal principal) {
         User user = userService.findByUsername(principal.getName());
         return "secured part of web service " + user.getUsername() + " " + user.getEmail();
-    }
-
-    //сюда могут заходить все у кого есть право READ_PROFILE (лежит в нашей БД)
-    @GetMapping("/read_profile")
-    public String pageForReadProfile() {
-        return "read profile page";
     }
 
     //сюда могут заходить только админы

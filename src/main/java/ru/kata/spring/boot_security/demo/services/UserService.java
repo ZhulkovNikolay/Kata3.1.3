@@ -32,13 +32,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-
     //нам дадут какое-то имя пользователя
     //этот метод вернет самого Юзера по полученному имени
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username); //достаем пользователя из базы по имени
+        User user = findByUsername(username); //достаем пользователя из базы по имени Optional<User>
         if (user == null) {
             throw new UsernameNotFoundException(String.format("user '%s' not found", username));
         }
