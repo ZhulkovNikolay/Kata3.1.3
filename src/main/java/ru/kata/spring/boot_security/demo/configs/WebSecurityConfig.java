@@ -37,7 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login", "/registration").permitAll()
                 .antMatchers("/user/**").authenticated()
                 //.anyRequest().hasAnyRole("USER", "ADMIN")
-                //.antMatchers("/authenticated/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 //если пользователь прошел аутентификацию, то мы должны выполнить ему преднастройку

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
@@ -19,9 +20,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
-    //его задача по имени пользователя предоставить самого юзера
-    //поэтому для начала нам нужен доступ к самому юзер репозиторию
+
     private UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+    @Autowired
+    public UserService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -33,8 +39,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    //нам дадут какое-то имя пользователя
-    //этот метод вернет самого Юзера по полученному имени
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -67,9 +71,11 @@ public class UserService implements UserDetailsService {
         return foundUser.orElse(null);
     }
 
-
     @Transactional
     public void saveUser(User user) {
+        //не забываем после апдейта юзера дать ему роль, иначе не сможет логиниться
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        user.getRoles().add(userRole);
         userRepository.save(user);
     }
 

@@ -17,6 +17,15 @@
     <tr th:each="user : ${allUsers}">
         <td><a th:text="${user.getUsername()}">name</a></td>
         <td><a th:text="${user.getEmail()}">email</a></td>
+
+        <td>
+            <form th:action="@{/admin/user}" method="get">
+                <input type="hidden" name="username" th:value="${user.username}" />
+                <button type="submit">Просмотреть</button>
+            </form>
+
+        </td>
+
         <td>
             <form th:method="POST" th:action="@{/admin/updateUserInfo}">
                 <input type="hidden" name="userId" th:value="${user.getId()}">

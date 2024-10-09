@@ -27,8 +27,9 @@ public class RegistrationService {
     public void register(User user) {
         String encryptResult = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptResult);
-        Role userRole = roleRepository.findByName("ROLE_USER");
-        user.getRoles().add(userRole);
+
+        //Role userRole = roleRepository.findByName("ROLE_USER");
+        //user.getRoles().add(userRole);
 
         userRepository.save(user);
     }
