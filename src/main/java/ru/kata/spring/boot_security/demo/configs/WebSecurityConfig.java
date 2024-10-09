@@ -29,7 +29,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userService = userService;
     }
 
-    //Защиту так же можно ставить на уровне таймлиф секюрити
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()

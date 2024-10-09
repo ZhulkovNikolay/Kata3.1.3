@@ -27,10 +27,8 @@ public class RegistrationService {
     public void register(User user) {
         String encryptResult = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptResult);
-
-        //Role userRole = roleRepository.findByName("ROLE_USER");
-        //user.getRoles().add(userRole);
-
+        //Role userRole = roleRepository.findByName("ROLE_USER"); вариант до добавления чекбоксов,
+        //user.getRoles().add(userRole); чтобы зарегистрированный пользователь по умолчанию получал роль
         userRepository.save(user);
     }
 

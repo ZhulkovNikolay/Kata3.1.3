@@ -23,6 +23,17 @@
     <br><br>
     <input type="submit" value="Update!">
 
+    <p>
+        <label>Roles:
+            <input type="checkbox" name="roles"
+                   th:each="role : ${allRoles}"
+                   th:text="${role.name}"
+                   th:value="${role.id}"
+                   th:field="*{roles}"
+            />
+        </label>
+    </p>
+
 </form>
 <form th:action="@{/logout}" th:method="POST">
     <input type="submit" value="logout"/>

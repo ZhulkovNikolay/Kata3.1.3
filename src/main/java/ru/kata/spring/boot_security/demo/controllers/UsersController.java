@@ -6,16 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.services.RegistrationService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
-
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -27,7 +24,6 @@ public class UsersController {
 
     @Autowired
     private RoleRepository roleRepository;
-
 
     @Autowired
     public UsersController(RegistrationService registrationService, UserValidator userValidator) {
@@ -54,8 +50,6 @@ public class UsersController {
         userValidator.validate(user, bindingResult);//проверили, если человек с таким именем уже есть
         if (bindingResult.hasErrors())
             return "/registration";
-
-
 
         registrationService.register(user);//добавляем пользователя в бд
         return "redirect:/admin/allusers";
@@ -97,40 +91,21 @@ public class UsersController {
     public String updateUser(@RequestParam("userId") int id, Model model) {
         User user = userService.findOne(id);
         model.addAttribute("user", user);
-        // registrationService.register(user);//добавляем пользователя в бд
-        // userService.update(id, user);
+
+        List<Role> allRoles = roleRepository.findAll();
+        model.addAttribute("allRoles", allRoles);
         return "updateUserInfo";
     }
-
-//    @PostMapping("/admin/saveUser")
-//    public String saveUser(@ModelAttribute("user") User user) {
-//        userService.saveUser(user);
-//        //registrationService.register(user);//добавляем пользователя в бд
-//        return "redirect:/admin/allusers";
-//    }
 
     @PostMapping("/admin/saveUser")
     public String saveUser(@ModelAttribute User user, BindingResult result) {
         if (result.hasErrors()) {
             return "user";
         }
-        // Шифруем пароль с помощью bcrypt
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        //Collection<Role> roles = roleRepository.findAll();
-        //model.addAttribute("allRoles", roles);
-        // Обновляем информацию о пользователе
         userService.saveUser(user);
         return "redirect:/admin/allusers";
     }
-//check box test---------------------------
-
-    @GetMapping("/checkbox")
-    public String checkBoxTest(Model model) {
-        List<Role> allRoles = roleRepository.findAll();
-        model.addAttribute("allRoles", allRoles);
-        return "/checkbox";
-    }
-
 
 }
