@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Все юзеры</title>
+</head>
+<body>
+<h2>Index Page</h2>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>email</th>
+        <th>Operations</th>
+    </tr>
+
+    <tr th:each="user : ${allUsers}">
+        <td><a th:text="${user.getUsername()}">name</a></td>
+        <td><a th:text="${user.getEmail()}">email</a></td>
+        <td>
+            <form th:method="POST" th:action="@{/admin/updateUserInfo}">
+                <input type="hidden" name="userId" th:value="${user.getId()}">
+                <input type="submit" value="Update">
+            </form>
+        </td>
+
+        <td>
+            <form th:method="GET" th:action="@{/admin/deleteUser}">
+                <input type="hidden" name="userId" th:value="${user.getId()}">
+                <input type="submit" value="Delete"/></form>
+        </td>
+
+    </tr>
+</table>
+<br/>
+<hr/>
+<!--<input type="button" value="Add"-->
+<!--       onclick="window.location.href = 'addNewUser'" />-->
+
+<form th:action="@{/admin/registration}" th:method="GET">
+    <input type="submit" value="Register New User"/>
+</form>
+
+<form th:action="@{/logout}" th:method="POST">
+    <input type="submit" value="logout"/>
+</form>
+
+</body>
+</html>

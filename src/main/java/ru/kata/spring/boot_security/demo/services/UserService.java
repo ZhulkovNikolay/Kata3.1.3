@@ -13,13 +13,14 @@ import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
     //его задача по имени пользователя предоставить самого юзера
     //поэтому для начала нам нужен доступ к самому юзер репозиторию
-
     private UserRepository userRepository;
 
     @Autowired
@@ -52,6 +53,35 @@ public class UserService implements UserDetailsService {
     //нужно для метода выше
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+    }
+
+    //--------------------DAO-----------------
+    @Transactional
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public User findOne(long id) {
+        Optional<User> foundUser = userRepository.findById(id);
+        return foundUser.orElse(null);
+    }
+
+
+    @Transactional
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void update(long id, User updatedUser) {
+        updatedUser.setId(id);
+        userRepository.save(updatedUser);
+    }
+
+    @Transactional
+    public void deleteUser(long id) {
+        userRepository.deleteById(id);
     }
 
 }
