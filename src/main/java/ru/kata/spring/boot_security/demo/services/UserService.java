@@ -1,8 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,10 +11,8 @@ import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -42,21 +38,11 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username); //достаем пользователя из базы по имени Optional<User>
+        User user = findByUsername(username); //достаем пользователя из базы по имени
         if (user == null) {
             throw new UsernameNotFoundException(String.format("user '%s' not found", username));
         }
-        //Спрингу нужно знать только имя, пароль и право доступа. Этим заведует UserDetails
-        //Наша задача нашего Юзера в БД привеcти к типу Юзера спрингова из UserDetails
-        //мы возвращаем спрингового юзера и внутрь кладем нашего
-        return new org.springframework.security.core.userdetails
-                .User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
-    }
-
-    //здесь подается список ролей из Юзера и мы должны преобразовать пачку ролей в пачку Authorities
-    //нужно для метода выше
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+        return user; //UPD перенес имплементацию UserDetails в класс User. Туда же перенес доставание ролей
     }
 
     //--------------------DAO-----------------

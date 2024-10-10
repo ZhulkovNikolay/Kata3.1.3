@@ -12,32 +12,30 @@ import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.services.RegistrationService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
-import java.security.Principal;
+
 import java.util.List;
 
 @Controller
-public class UsersController {
+@RequestMapping("/admin")
+public class AdminController {
 
     private final RegistrationService registrationService;
-    private UserService userService;
+    private final UserService userService;
     private final UserValidator userValidator;
 
     @Autowired
     private RoleRepository roleRepository;
 
+
     @Autowired
-    public UsersController(RegistrationService registrationService, UserValidator userValidator) {
+    public AdminController(RegistrationService registrationService, UserService userService, UserValidator userValidator) {
         this.registrationService = registrationService;
+        this.userService = userService;
         this.userValidator = userValidator;
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     //кладем юзера в форму регистрации
-    @GetMapping("/admin/registration")
+    @GetMapping("/registration")
     public String registration(@ModelAttribute("user") User user, Model model) {
         List<Role> allRoles = roleRepository.findAll();
         model.addAttribute("allRoles", allRoles);
@@ -45,7 +43,7 @@ public class UsersController {
     }
 
     //берем юзера ИЗ формы регистрации
-    @PostMapping("/admin/registration")
+    @PostMapping("/registration")
     public String performRegistration(@ModelAttribute("user") User user, BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);//проверили, если человек с таким именем уже есть
         if (bindingResult.hasErrors())
@@ -56,38 +54,31 @@ public class UsersController {
     }
 
     @GetMapping("/user")
-    public String pageForAuthenticatedUsers(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
-        model.addAttribute("user", user);
-        return "user";
-    }
-
-    @GetMapping("/admin/user")
     public String pageForViewForAdmin(@RequestParam("username") String username, Model model) {
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
         return "user";
     }
 
-    @GetMapping("/admin")
+    @GetMapping()
     public String adminPage() {
         return "admin";
     }
 
-    @GetMapping("/admin/allusers")
+    @GetMapping("/allusers")
     public String showAllUsers(Model model) {
         List<User> allUsers = userService.findAll();
         model.addAttribute("allUsers", allUsers);
         return "allusers";
     }
 
-    @GetMapping("/admin/deleteUser")
+    @GetMapping("/deleteUser")
     public String deleteUser(@RequestParam("userId") int id) {
         userService.deleteUser(id);
         return "redirect:/admin/allusers";
     }
 
-    @PostMapping("/admin/updateUserInfo")
+    @PostMapping("/updateUserInfo")
     public String updateUser(@RequestParam("userId") int id, Model model) {
         User user = userService.findOne(id);
         model.addAttribute("user", user);
@@ -97,7 +88,7 @@ public class UsersController {
         return "updateUserInfo";
     }
 
-    @PostMapping("/admin/saveUser")
+    @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute User user, BindingResult result) {
         if (result.hasErrors()) {
             return "user";
@@ -107,5 +98,4 @@ public class UsersController {
         userService.saveUser(user);
         return "redirect:/admin/allusers";
     }
-
 }
